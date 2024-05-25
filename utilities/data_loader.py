@@ -71,42 +71,15 @@ def get_selfies_alphabet(smiles_list):
 
 def get_string_alphabet(smiles_list, filename):
     """Returns a sorted list of all SELFIES tokens and SMILES tokens required
-    to build a string representation of each molecule. If this dataset has
-    already been used, then these will be accessed from a correspondning file."""
-
-    directory = 'dataset_encoding'
-    name1 = directory + '/smiles_alphabet_info_'
-    name2 = directory + '/selfies_alphabet_info_'
-    i = len(filename) - 1
-    dataset = ''
-    while i >= 0 and filename[i] != '/':
-        dataset = filename[i] + dataset
-        i -= 1
-    name1 = name1 + dataset
-    name2 = name2 + dataset
+    to build a string representation of each molecule."""
     selfies_alphabet = []
     smiles_alphabet = []
-    if os.path.exists(name1):
-        df = pd.read_csv(name1)
-        smiles_alphabet = np.asanyarray(df.alphabet)
-        df = pd.read_csv(name2)
-        selfies_alphabet = np.asanyarray(df.alphabet)
-    else:
-        utils.make_dir(directory)
-        f = open(name1, "w+")
-        f.write('alphabet\n')
-        smiles_alphabet = list(set(''.join(smiles_list)))
-        smiles_alphabet.append(' ')  # for padding
-        smiles_alphabet.sort()
-        for s in smiles_alphabet:
-            f.write(s + '\n')
-        f.close()
-        f = open(name2, "w+")
-        f.write('alphabet\n')
-        selfies_alphabet = get_selfies_alphabet(smiles_list)
-        for s in selfies_alphabet:
-            f.write(s + '\n')
-        f.close()
+    print("generating new alphabets for " + str(len(smiles_list)) + " species...", end='')
+    smiles_alphabet = list(set(''.join(smiles_list)))
+    smiles_alphabet.append(' ')  # for padding
+    smiles_alphabet.sort()
+    selfies_alphabet = get_selfies_alphabet(smiles_list)
+    print(" done")
 
     return smiles_alphabet, selfies_alphabet
 
